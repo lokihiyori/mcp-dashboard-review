@@ -16,6 +16,10 @@ A standalone dashboard with live MCP discovery, documentation and a read-only Fi
 - Original **Topology / Info Center / Skills** links open the searchable tool
   reference in Dev Guide, with category, read/write and risk filters preserved.
 - **Connect a client** opens `https://resource.casa/mcp/index.html`.
+- The internal Connect page and navigation entry are removed. Connection setup
+  links go directly to the original MCP website; `/connect/` now returns 404.
+- The interface is dark-only, including before JavaScript loads. There is no
+  light/system theme switch, and old saved theme preferences are ignored.
 - The sidebar endpoint block and the entire page footer are removed.
 - Files reads current directory entries and file contents from the separate
   loopback-only backend, with 30-second polling, manual refresh and stale states.
@@ -52,7 +56,6 @@ authentication requirements, root permissions and remaining integration work.
 | Route | Purpose |
 | --- | --- |
 | `/` | Live MCP overview, quick starts and workflows |
-| `/connect/` | Connection instructions using credential placeholders |
 | `/files/` | Four file sources, folder hierarchy and inline previews |
 | `/files/?source=information` | Direct link to a file source |
 | `/tools/` | Compatibility redirect to Files; no catalog page |
@@ -76,7 +79,7 @@ authentication requirements, root permissions and remaining integration work.
 
 ## Hosting and integration
 
-The site retains Next.js 15, TypeScript, Tailwind v4 and its existing theme.
+The site retains Next.js 15, TypeScript, Tailwind v4 and its existing dark palette.
 No extra runtime package was added. Production remains a static export.
 Set `NEXT_PUBLIC_BASE_PATH` before building when hosting under a subpath;
 trailing slashes are normalized. Client API requests include the same base path.

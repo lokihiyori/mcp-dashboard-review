@@ -1,7 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AppShell } from "@/components/app-shell";
-import { THEME_INIT_SCRIPT } from "@/components/theme-toggle";
 import { SERVER_NAME } from "@/lib/config";
 import { LiveMcpProvider } from "@/components/live-mcp-provider";
 
@@ -14,15 +13,16 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+export const viewport: Viewport = {
+  colorScheme: "dark",
+  themeColor: "#16140f",
+};
+
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* Applies the stored theme before first paint to avoid a flash. */}
-        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
-      </head>
+    <html lang="en" className="dark">
       <body>
         <LiveMcpProvider><AppShell>{children}</AppShell></LiveMcpProvider>
       </body>

@@ -192,9 +192,9 @@ describe("no credentials in the source tree", () => {
   });
 
   it("still uses the placeholders it is supposed to use", () => {
-    const connect = readFileSync(join(SRC, "lib", "connect.ts"), "utf8");
-    expect(connect).toContain("DEV_CENTER_TOKEN");
-    expect(connect).toContain("DEV_CENTER_SETUP_CODE");
+    const config = readFileSync(join(SRC, "lib", "config.ts"), "utf8");
+    expect(config).toContain("Bearer $DEV_CENTER_TOKEN");
+    expect(config).toContain("$DEV_CENTER_SETUP_CODE");
   });
 
   it("keeps .env.example free of assigned values", () => {

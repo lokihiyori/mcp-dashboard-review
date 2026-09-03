@@ -78,10 +78,10 @@ describe("AppShell — mobile drawer", () => {
     await user.click(screen.getByRole("button", { name: "Open navigation menu" }));
     const drawer = screen.getByRole("dialog");
     const links = Array.from(drawer.querySelectorAll("a"));
-    const connect = links.find((link) => link.getAttribute("href") === "/connect");
-    expect(connect).toBeDefined();
+    const files = links.find((link) => link.getAttribute("href") === "/files");
+    expect(files).toBeDefined();
 
-    await user.click(connect!);
+    await user.click(files!);
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
@@ -98,7 +98,6 @@ describe("AppShell — mobile drawer", () => {
     expect(hrefs).toEqual(
       expect.arrayContaining([
         "/",
-        "/connect",
         "/files",
         "/guide",
         "/guide?category=topology#tool-reference",
@@ -106,6 +105,8 @@ describe("AppShell — mobile drawer", () => {
         "/guide?category=skills#tool-reference",
       ]),
     );
+    expect(hrefs).not.toContain("/connect");
+    expect(screen.queryByRole("button", { name: /theme:/i })).not.toBeInTheDocument();
   });
 });
 
@@ -166,6 +167,11 @@ describe("AppShell — accessibility and status", () => {
 });
 
 describe("AppShell — retired sections", () => {
+  it("has no Connect navigation or theme switch", () => {
+    renderShell();
+    expect(screen.queryByRole("link", { name: "Connect" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /theme:/i })).not.toBeInTheDocument();
+  });
   it("preserves the original three tool categories separately from Files", () => {
     renderShell();
     expect(screen.getByText("Categories", { exact: true })).toBeInTheDocument();

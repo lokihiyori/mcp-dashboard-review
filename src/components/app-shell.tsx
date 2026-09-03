@@ -7,7 +7,6 @@ import {
   BookOpenText,
   LayoutDashboard,
   Menu,
-  PlugZap,
   FolderOpen,
   X,
 } from "lucide-react";
@@ -16,13 +15,11 @@ import { CATEGORIES } from "@/lib/catalog";
 import { SERVER_NAME } from "@/lib/config";
 import { useLiveMcp } from "@/components/live-mcp-provider";
 import { GlobalSearch } from "@/components/global-search";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { ServiceStatusPill } from "@/components/service-status";
 import { OfflineBanner } from "@/components/ui/states";
 
 const NAV = [
   { href: "/", label: "Overview", icon: LayoutDashboard },
-  { href: "/connect", label: "Connect", icon: PlugZap },
   { href: "/files", label: "Files", icon: FolderOpen },
   { href: "/guide", label: "Dev Guide", icon: BookOpenText },
 ] as const;
@@ -162,7 +159,6 @@ export function AppShell({
           <div className="ml-auto flex min-w-0 flex-1 items-center justify-end gap-2 sm:gap-3">
             {!pathname.startsWith("/files") && <GlobalSearch className="w-full max-w-xs min-w-0" />}
             <ServiceStatusPill status={status} className="hidden md:inline-flex" />
-            <ThemeToggle />
           </div>
         </div>
       </header>

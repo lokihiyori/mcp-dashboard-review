@@ -1,5 +1,6 @@
 import type { ToolCategory } from "@/lib/types";
 import { EXAMPLE_PROJECT, EXAMPLE_SKILL } from "@/lib/examples";
+import { REFERENCE_PAGE_URL } from "@/lib/config";
 
 /**
  * Task-first routing: "I want to do X" → the tools that do X, in order.
@@ -184,8 +185,8 @@ export const FEATURED_WORKFLOWS = WORKFLOWS.filter((workflow) => workflow.featur
 export const QUICK_START = [
   {
     title: "Connect a client",
-    body: "Pick your client on the Connect page and copy its configuration. Both required headers are included in every example.",
-    href: "/connect",
+    body: "Open the original MCP setup page for client connection instructions. Keep credentials in your client's private configuration.",
+    href: REFERENCE_PAGE_URL,
     linkLabel: "Connection setup",
   },
   {

@@ -38,7 +38,7 @@ export default function OverviewPage() {
 
       <Section
         title="Endpoint"
-        description="One URL, two required headers. Configuration examples on the Connect page use environment-variable placeholders only."
+        description="One URL, two required headers. Use Connect a client to open the original MCP setup page."
       >
         <div className="card flex flex-wrap items-center gap-3 p-4">
           <InlineCode value={MCP_ENDPOINT} label="MCP endpoint URL" />

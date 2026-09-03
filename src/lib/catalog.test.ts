@@ -7,7 +7,7 @@ import {
   getToolsByCategory,
 } from "@/lib/catalog";
 import { QUICK_START, WORKFLOWS } from "@/lib/workflows";
-import { MCP_ENDPOINT, TOTALS } from "@/lib/config";
+import { MCP_ENDPOINT, REFERENCE_PAGE_URL, TOTALS } from "@/lib/config";
 import { staticCatalogAdapter } from "@/lib/adapters/static-catalog-adapter";
 
 /** The exact tool inventory the server exposes, as three named pillars. */
@@ -233,7 +233,7 @@ describe("standalone mode", () => {
 
   it("keeps every internal route root-relative", () => {
     const hrefs = [
-      ...QUICK_START.map((step) => step.href),
+      ...QUICK_START.map((step) => step.href).filter((href) => href !== REFERENCE_PAGE_URL),
       ...ALL_TOOLS.map((tool) => `/tools/${tool.name}`),
     ];
     for (const href of hrefs) {
@@ -243,8 +243,13 @@ describe("standalone mode", () => {
     }
   });
 
+  it("sends connection setup to the original site, never the removed route", () => {
+    expect(QUICK_START[0].href).toBe(REFERENCE_PAGE_URL);
+    expect(QUICK_START.map((step) => step.href)).not.toContain("/connect");
+  });
+
   it("needs no environment variable to resolve the endpoint for display", () => {
-    // Falls back to a literal, so a bare `npm run dev` renders the Connect page.
+    // Falls back to a literal, so a bare `npm run dev` renders the Overview.
     expect(MCP_ENDPOINT).toMatch(/^https:\/\//);
   });
 });

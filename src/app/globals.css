@@ -1,48 +1,11 @@
 @import "tailwindcss";
 
-/* Class-based dark mode: the theme toggle writes `.dark` onto <html>. */
-@custom-variant dark (&:where(.dark, .dark *));
-
 /*
- * Palette. The warm neutral ground and amber accent carry over from the
+ * Dark-only palette. The warm neutral ground and amber accent carry over from the
  * published /mcp/index.html page so the dashboard reads as the same product.
- * Light values are darkened where needed to hold a 4.5:1 contrast ratio.
+ * Root values apply before JavaScript and ignore OS or old saved preferences.
  */
 :root {
-  --bg: #faf9f7;
-  --surface: #ffffff;
-  --surface-2: #f3f1ec;
-  --surface-3: #eae6de;
-  --border: #e1dbd0;
-  --border-strong: #cfc7b8;
-  --text: #1b1915;
-  --text-muted: #5f594e;
-  --text-faint: #837c6e;
-  --accent: #9c5a12;
-  --accent-hover: #7d4707;
-  --accent-soft: #f7ecdb;
-  --accent-border: #e5cfae;
-
-  --cat-topology: #1f6394;
-  --cat-topology-soft: #e4eff8;
-  --cat-info: #35702a;
-  --cat-info-soft: #e6f1e2;
-  --cat-skills: #a44a30;
-  --cat-skills-soft: #fae9e3;
-
-  --risk-low: #35702a;
-  --risk-low-soft: #e6f1e2;
-  --risk-medium: #8a5a09;
-  --risk-medium-soft: #f9eed8;
-  --risk-high: #a3352a;
-  --risk-high-soft: #fae5e2;
-
-  --ring: #9c5a12;
-  --shadow-card: 0 1px 2px rgb(28 25 21 / 0.05), 0 1px 3px rgb(28 25 21 / 0.04);
-  --shadow-pop: 0 4px 6px -2px rgb(28 25 21 / 0.06), 0 12px 28px -8px rgb(28 25 21 / 0.16);
-}
-
-.dark {
   --bg: #16140f;
   --surface: #1f1c16;
   --surface-2: #272319;
@@ -117,13 +80,8 @@
   }
 
   html {
-    color-scheme: light;
-    scroll-behavior: smooth;
-  }
-
-  .dark html,
-  html.dark {
     color-scheme: dark;
+    scroll-behavior: smooth;
   }
 
   body {

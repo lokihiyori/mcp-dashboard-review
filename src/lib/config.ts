@@ -1,9 +1,8 @@
 /**
  * Non-secret, display-only configuration.
  *
- * Nothing in this module may hold a credential. The Connect page renders
- * environment-variable *names* so a reader can paste the examples without ever
- * seeing a token: real values live only in server-side env vars.
+ * Nothing in this module may hold a credential. Examples use environment-variable
+ * names only: real values live only in server-side env vars.
  */
 
 export const MCP_ENDPOINT =
