@@ -31,6 +31,10 @@ jobs:
           unzip -q site.zip -d _site
           test -f _site/index.html
           test -f _site/tools/pool_info/index.html
+          test -f _site/files/index.html
+          test -f _site/guide/index.html
+      - name: Verify the public package contains no sensitive data
+        run: node scripts/verify-review.mjs _site
       - name: Upload static site
         uses: actions/upload-pages-artifact@v4
         with:

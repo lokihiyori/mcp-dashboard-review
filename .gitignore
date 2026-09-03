@@ -1,0 +1,19 @@
+node_modules/
+.next/
+.next-dev/
+out/
+build/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# Never commit real credentials. Only .env.example belongs in git.
+.env
+.env.local
+.env.*.local
+.files.local.json
+
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

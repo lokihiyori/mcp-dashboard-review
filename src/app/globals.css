@@ -1,0 +1,221 @@
+@import "tailwindcss";
+
+/* Class-based dark mode: the theme toggle writes `.dark` onto <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Palette. The warm neutral ground and amber accent carry over from the
+ * published /mcp/index.html page so the dashboard reads as the same product.
+ * Light values are darkened where needed to hold a 4.5:1 contrast ratio.
+ */
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --surface-2: #f3f1ec;
+  --surface-3: #eae6de;
+  --border: #e1dbd0;
+  --border-strong: #cfc7b8;
+  --text: #1b1915;
+  --text-muted: #5f594e;
+  --text-faint: #837c6e;
+  --accent: #9c5a12;
+  --accent-hover: #7d4707;
+  --accent-soft: #f7ecdb;
+  --accent-border: #e5cfae;
+
+  --cat-topology: #1f6394;
+  --cat-topology-soft: #e4eff8;
+  --cat-info: #35702a;
+  --cat-info-soft: #e6f1e2;
+  --cat-skills: #a44a30;
+  --cat-skills-soft: #fae9e3;
+
+  --risk-low: #35702a;
+  --risk-low-soft: #e6f1e2;
+  --risk-medium: #8a5a09;
+  --risk-medium-soft: #f9eed8;
+  --risk-high: #a3352a;
+  --risk-high-soft: #fae5e2;
+
+  --ring: #9c5a12;
+  --shadow-card: 0 1px 2px rgb(28 25 21 / 0.05), 0 1px 3px rgb(28 25 21 / 0.04);
+  --shadow-pop: 0 4px 6px -2px rgb(28 25 21 / 0.06), 0 12px 28px -8px rgb(28 25 21 / 0.16);
+}
+
+.dark {
+  --bg: #16140f;
+  --surface: #1f1c16;
+  --surface-2: #272319;
+  --surface-3: #322d21;
+  --border: #3a3527;
+  --border-strong: #4d4633;
+  --text: #ece7db;
+  --text-muted: #a89f8c;
+  --text-faint: #857d6b;
+  --accent: #e0a04e;
+  --accent-hover: #eeb367;
+  --accent-soft: #392b14;
+  --accent-border: #5b451f;
+
+  --cat-topology: #8dbbe0;
+  --cat-topology-soft: #1a2733;
+  --cat-info: #97c884;
+  --cat-info-soft: #1c2a19;
+  --cat-skills: #e2a08e;
+  --cat-skills-soft: #32211c;
+
+  --risk-low: #97c884;
+  --risk-low-soft: #1c2a19;
+  --risk-medium: #dda94f;
+  --risk-medium-soft: #2f2513;
+  --risk-high: #e58b7e;
+  --risk-high-soft: #331e1b;
+
+  --ring: #e0a04e;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-pop: 0 4px 6px -2px rgb(0 0 0 / 0.4), 0 16px 32px -12px rgb(0 0 0 / 0.6);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-fg: var(--text);
+  --color-muted: var(--text-muted);
+  --color-faint: var(--text-faint);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-border: var(--accent-border);
+
+  --color-topology: var(--cat-topology);
+  --color-topology-soft: var(--cat-topology-soft);
+  --color-info: var(--cat-info);
+  --color-info-soft: var(--cat-info-soft);
+  --color-skills: var(--cat-skills);
+  --color-skills-soft: var(--cat-skills-soft);
+
+  --color-risk-low: var(--risk-low);
+  --color-risk-low-soft: var(--risk-low-soft);
+  --color-risk-medium: var(--risk-medium);
+  --color-risk-medium-soft: var(--risk-medium-soft);
+  --color-risk-high: var(--risk-high);
+  --color-risk-high-soft: var(--risk-high-soft);
+
+  --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas,
+    monospace;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    color-scheme: light;
+    scroll-behavior: smooth;
+  }
+
+  .dark html,
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* One visible, consistent focus treatment everywhere. */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--accent-soft);
+    color: var(--text);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 100;
+  }
+  .skip-link:focus {
+    left: 0.75rem;
+    top: 0.75rem;
+    padding: 0.5rem 0.875rem;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    box-shadow: var(--shadow-pop);
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: var(--shadow-card);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  /* Long code and tables scroll inside their own box, never the page. */
+  .scroll-x {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+}
+
+@layer utilities {
+  .shadow-pop {
+    box-shadow: var(--shadow-pop);
+  }
+
+  .animate-skeleton {
+    animation: skeleton-pulse 1.6s ease-in-out infinite;
+  }
+
+  @keyframes skeleton-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.45;
+    }
+  }
+}
