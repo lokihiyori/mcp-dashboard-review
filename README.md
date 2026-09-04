@@ -1,5 +1,7 @@
 # dev-center — MCP Dashboard
 
+Production: https://resource.casa/mcp/dashboard/ (existing MCP web access required)
+
 Public review: https://lokihiyori.github.io/mcp-dashboard-review/
 
 **This repository now includes the sanitized application source and the compiled
@@ -29,8 +31,9 @@ A standalone dashboard with live MCP discovery, documentation and a read-only Fi
   manual refresh and timestamps. Tool additions/removals update without a build.
   Failed discovery never silently reuses old counts. Individual tool documentation
   remains a labelled saved snapshot; new tool names show documentation pending.
-- No company service or permission is changed, and no internal files are
-  published. The Pages workflow publishes only the reviewed contents of site.zip.
+- The production dashboard runs on QEA-HOST behind the existing MCP web access
+  control. Its API has no published host port and all configured file mounts are
+  read-only. The public GitHub Pages review remains disconnected from live data.
 
 ## Run it locally
 
@@ -81,6 +84,8 @@ authentication requirements, root permissions and remaining integration work.
 
 The site retains Next.js 15, TypeScript, Tailwind v4 and its existing dark palette.
 No extra runtime package was added. Production remains a static export.
+The production export is served at `/mcp/dashboard/`; its read-only API runs in
+private Docker networks and uses the existing dev-center token only server-side.
 Set `NEXT_PUBLIC_BASE_PATH` before building when hosting under a subpath;
 trailing slashes are normalized. Client API requests include the same base path.
 

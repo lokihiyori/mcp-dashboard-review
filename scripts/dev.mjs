@@ -1,8 +1,10 @@
 import { spawn } from "node:child_process";
 import { createRequire } from "node:module";
+import nextEnv from "@next/env";
 import { startFileServer } from "../backend/server.mjs";
 
 const require = createRequire(import.meta.url);
+nextEnv.loadEnvConfig(process.cwd());
 let server;
 try { server = await startFileServer(); }
 catch (error) { console.error(error.code === "EADDRINUSE" ? "File service port is occupied. No existing process was stopped." : error.message); process.exit(1); }

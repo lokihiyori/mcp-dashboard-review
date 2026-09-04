@@ -61,6 +61,8 @@ Before starting `npm run files:serve` in production, configure server-only value
 - `FILES_CONFIG_PATH`: administrator-managed directory mapping.
 - `FILES_GATEWAY_KEY`: a new random value of at least 32 characters. This is a
   separate service credential, NOT the MCP token. Never use `NEXT_PUBLIC_*`.
+- `FILES_GATEWAY_KEY_FILE`: an alternative absolute secret-file path. Configure
+  either this or `FILES_GATEWAY_KEY`, never both.
 - `FILES_ACCESS_CONTROLLED=true`: set only after the viewer authentication and
   group-level authorization below are enforced and tested.
 - `FILES_ALLOWED_ORIGINS`: exact, comma-separated approved website origins.
@@ -69,6 +71,8 @@ The reverse proxy must require company sign-in and authorize the approved viewer
 group for **all** three API routes, overwrite `X-Files-Gateway-Key` with the
 server-only key, and forward `X-Files-Request`. Keep the service bound to
 127.0.0.1. Never expose its port directly or use a public proxy with no login.
+When the service runs in a container shared only with the authenticated proxy,
+set `FILES_HOST=0.0.0.0` and do not publish the container port to the host.
 The backend does not implement per-user/per-root ACLs: everyone allowed through
 this gateway can read all configured roots. Use separate deployments/configs if
 different groups need different access. A shared key alone is not user login.

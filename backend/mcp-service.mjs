@@ -1,4 +1,6 @@
 /** Read-only MCP discovery. No tools/call, filesystem access or remote execution. */
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { authorize } from "./file-service.mjs";
 
 const GROUPS = {
@@ -17,16 +19,36 @@ export class ProbeError extends Error {
   constructor(code) { super(code); this.code = code; }
 }
 
+function readSecret(env, name) {
+  const direct = env[name] || "";
+  const file = env[`${name}_FILE`] || "";
+  if (direct && file) throw new ProbeError("configuration");
+  if (!file) return direct;
+  if (typeof file !== "string" || !path.isAbsolute(file)) throw new ProbeError("configuration");
+  try {
+    const value = readFileSync(file, "utf8").trim();
+    if (!value || value.length > 4096 || value.includes("\0")) throw new ProbeError("configuration");
+    return value;
+  } catch (error) {
+    if (error instanceof ProbeError) throw error;
+    throw new ProbeError("configuration");
+  }
+}
+
 export function readMcpConfig(env = process.env) {
   // Only operator-controlled configuration can choose an upstream. Never a browser parameter.
   const urls = (env.DEV_CENTER_MCP_URLS || "https://resource.casa/mcp").split(",").map(s => s.trim()).filter(Boolean);
+  const httpHosts = new Set((env.DEV_CENTER_MCP_HTTP_HOSTS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean));
+  if ([...httpHosts].some(host => host.length > 253 || !/^[a-z0-9.-]+$/.test(host))) throw new ProbeError("configuration");
   if (!urls.length || urls.length > 8 || new Set(urls).size !== urls.length) throw new ProbeError("configuration");
   for (const raw of urls) {
     const url = new URL(raw);
-    if (url.protocol !== "https:" && !(url.protocol === "http:" && ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname))) throw new ProbeError("configuration");
+    const localHttp = url.protocol === "http:" && ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname);
+    const approvedServiceHttp = url.protocol === "http:" && httpHosts.has(url.hostname.toLowerCase());
+    if (url.protocol !== "https:" && !localHttp && !approvedServiceHttp) throw new ProbeError("configuration");
     if (url.username || url.password || url.search || url.hash) throw new ProbeError("configuration");
   }
-  return { urls, token: env.DEV_CENTER_TOKEN || "", setupCode: env.DEV_CENTER_SETUP_CODE || "" };
+  return { urls, token: readSecret(env, "DEV_CENTER_TOKEN"), setupCode: readSecret(env, "DEV_CENTER_SETUP_CODE") };
 }
 
 function parseMessage(text, id) {
@@ -75,7 +97,7 @@ export async function discoverTools(url, credentials, { fetchImpl = fetch, timeo
   let session = "", protocol = SUPPORTED_VERSIONS[0], sequence = 0;
   const headers = () => ({
     "Content-Type": "application/json", Accept: "application/json, text/event-stream",
-    Authorization: `Bearer ${credentials.token}`, "X-Setup-Code": credentials.setupCode,
+    Authorization: `Bearer ${credentials.token}`, ...(credentials.setupCode ? { "X-Setup-Code": credentials.setupCode } : {}),
     "MCP-Protocol-Version": protocol, ...(session ? { "Mcp-Session-Id": session } : {}),
   });
   async function send(method, params, notification = false) {
@@ -155,7 +177,7 @@ export function createOverviewService({ getConfig = readMcpConfig, probe = disco
     const empty = { checkedAt, source: "live-mcp", tools: null, categories: null, counts: { tools: null, categories: null, endpoints: null }, endpoints: [] };
     let config;
     try { config = getConfig(); } catch { return { ...empty, status: status("unknown", "Configuration needed", "The server-side endpoint configuration is invalid.", checkedAt) }; }
-    if (!config.token || !config.setupCode) return { ...empty, status: status("unknown", "Not configured", "Configure the MCP bearer token and setup code on the backend. SSH credentials are separate.", checkedAt) };
+    if (!config.token) return { ...empty, status: status("unknown", "Not configured", "Configure the MCP bearer token on the backend. SSH credentials are separate.", checkedAt) };
     const results = await Promise.all(config.urls.map(async (url, i) => {
       try { return { id: `endpoint-${i + 1}`, tools: await probe(url, config), state: "online", error: null }; }
       catch (error) { return { id: `endpoint-${i + 1}`, tools: null, state: "offline", error: ERRORS[error.code] || ERRORS.network }; }

@@ -55,6 +55,9 @@ const SCANNABLE_EXTENSIONS = new Set([
   ".txt",
   ".md",
   ".toml",
+  ".yml",
+  ".yaml",
+  ".conf",
   ".example",
   ".env",
 ]);
@@ -68,7 +71,7 @@ function walk(dir: string): string[] {
     const path = join(dir, entry);
     if (statSync(path).isDirectory()) {
       found.push(...walk(path));
-    } else if (SCANNABLE_EXTENSIONS.has(extname(entry)) || entry.startsWith(".env")) {
+    } else if (SCANNABLE_EXTENSIONS.has(extname(entry)) || entry.startsWith(".env") || entry.startsWith("Dockerfile")) {
       found.push(path);
     }
   }
@@ -133,7 +136,7 @@ function findSuspicious(text: string): string[] {
 
 const SOURCE_FILES = [
   ...walk(SRC),
-  ...["backend", "scripts"].flatMap((dir) => existsSync(join(ROOT, dir)) ? walk(join(ROOT, dir)) : []),
+  ...["backend", "scripts", "deploy"].flatMap((dir) => existsSync(join(ROOT, dir)) ? walk(join(ROOT, dir)) : []),
   ...["package.json", ".env.example", "next.config.ts", "README.md"]
     .map((file) => join(ROOT, file))
     .filter((file) => existsSync(file)),

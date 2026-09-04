@@ -1,6 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { classifyTool, createMcpHandler, createOverviewService, discoverTools, ProbeError, readMcpConfig } from "./mcp-service.mjs";
 
 const config = { urls: ["https://example.invalid/mcp"], token: "fixture", setupCode: "fixture" };
@@ -144,7 +147,21 @@ test("validates only server-controlled secure upstream URLs", () => {
   for (const url of ["http://example.invalid/mcp", "https://user:password@example.invalid/mcp", "https://example.invalid/mcp?token=private", "https://example.invalid/mcp#fragment", "file:///private"]) {
     assert.throws(() => readMcpConfig({ DEV_CENTER_MCP_URLS: url }));
   }
+  assert.deepEqual(readMcpConfig({ DEV_CENTER_MCP_URLS: "http://dev-center:8080/mcp", DEV_CENTER_MCP_HTTP_HOSTS: "dev-center" }).urls, ["http://dev-center:8080/mcp"]);
+  assert.throws(() => readMcpConfig({ DEV_CENTER_MCP_URLS: "http://other-service:8080/mcp", DEV_CENTER_MCP_HTTP_HOSTS: "dev-center" }));
   assert.equal(readMcpConfig({}).urls.length, 1);
+});
+
+test("loads server credentials from absolute secret files without requiring a setup code", () => {
+  const directory = mkdtempSync(path.join(tmpdir(), "dashboard-mcp-secret-"));
+  const tokenFile = path.join(directory, "token");
+  writeFileSync(tokenFile, "fixture-token\n", { mode: 0o600 });
+  try {
+    const loaded = readMcpConfig({ DEV_CENTER_TOKEN_FILE: tokenFile });
+    assert.equal(loaded.token, "fixture-token");
+    assert.equal(loaded.setupCode, "");
+    assert.throws(() => readMcpConfig({ DEV_CENTER_TOKEN: "direct", DEV_CENTER_TOKEN_FILE: tokenFile }));
+  } finally { rmSync(directory, { recursive: true, force: true }); }
 });
 
 test("the HTTP gateway is read-only, access-controlled, no-store and rejects target URL parameters", async t => {

@@ -5,7 +5,7 @@
   "description": "Production-ready dashboard for the dev-center MCP server: 14 tools, 3 categories, 1 endpoint.",
   "scripts": {
     "dev": "node scripts/dev.mjs",
-    "files:serve": "node backend/server.mjs",
+    "files:serve": "node scripts/files-serve.mjs",
     "test:files": "node --test backend/file-service.test.mjs",
     "test:mcp": "node --test backend/mcp-service.test.mjs",
     "build": "next build",

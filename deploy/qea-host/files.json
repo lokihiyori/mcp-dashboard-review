@@ -1,0 +1,10 @@
+{
+  "roots": [
+    { "source": "generated", "id": "tool-drafts", "label": "Generated tools", "path": "/sources/generated-tools" },
+    { "source": "generated", "id": "skill-drafts", "label": "Generated skills", "path": "/sources/generated-skills" },
+    { "source": "published", "id": "registry", "label": "Published skills", "path": "/sources/published-skills" },
+    { "source": "information", "id": "records", "label": "Information center", "path": "/sources/info-center" },
+    { "source": "artifacts", "id": "packages", "label": "Packages", "path": "/sources/packages" },
+    { "source": "artifacts", "id": "manifests", "label": "Deployment manifests", "path": "/sources/manifests" }
+  ]
+}

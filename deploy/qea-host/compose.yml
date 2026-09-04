@@ -1,0 +1,49 @@
+services:
+  mcp-upstream:
+    image: nginx:alpine
+    container_name: mcp-dashboard-upstream
+    restart: unless-stopped
+    volumes:
+      - ${DASHBOARD_STATE_DIR:?set DASHBOARD_STATE_DIR}/config/nginx-mcp.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - dev_center
+
+  dashboard-api:
+    build:
+      context: ../..
+      dockerfile: deploy/qea-host/Dockerfile.api
+    image: mcp-dashboard-api:latest
+    container_name: mcp-dashboard-api
+    restart: unless-stopped
+    depends_on:
+      - mcp-upstream
+    env_file:
+      - ${DASHBOARD_STATE_DIR:?set DASHBOARD_STATE_DIR}/secrets/dashboard.env
+    environment:
+      NODE_ENV: production
+      FILES_HOST: 0.0.0.0
+      FILES_PORT: 3101
+      FILES_CONFIG_PATH: /config/files.json
+      FILES_ACCESS_CONTROLLED: "true"
+      FILES_ALLOWED_ORIGINS: https://resource.casa,http://resource.casa
+      DEV_CENTER_TOKEN_FILE: /run/secrets/mcp_gateway_token
+    volumes:
+      - ${DASHBOARD_STATE_DIR:?set DASHBOARD_STATE_DIR}/config/files.json:/config/files.json:ro
+      - ${DEV_CENTER_STATE_DIR:?set DEV_CENTER_STATE_DIR}/secrets/mcp_gateway_token:/run/secrets/mcp_gateway_token:ro
+      - ${DEV_CENTER_STATE_DIR:?set DEV_CENTER_STATE_DIR}/control-plane/tools:/sources/generated-tools:ro
+      - ${DEV_CENTER_STATE_DIR:?set DEV_CENTER_STATE_DIR}/control-plane/skills:/sources/generated-skills:ro
+      - ${DEV_CENTER_STATE_DIR:?set DEV_CENTER_STATE_DIR}/data/skills-registry:/sources/published-skills:ro
+      - ${DEV_CENTER_STATE_DIR:?set DEV_CENTER_STATE_DIR}/data/info-center:/sources/info-center:ro
+      - ${DEV_CENTER_STATE_DIR:?set DEV_CENTER_STATE_DIR}/control-plane/packages:/sources/packages:ro
+      - ${DEV_CENTER_STATE_DIR:?set DEV_CENTER_STATE_DIR}/control-plane/manifests:/sources/manifests:ro
+    networks:
+      - caddy_front
+      - dev_center
+
+networks:
+  caddy_front:
+    external: true
+    name: caddy_front
+  dev_center:
+    external: true
+    name: dev_center
